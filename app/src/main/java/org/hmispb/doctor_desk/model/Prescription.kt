@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class Prescription(
     @PrimaryKey(autoGenerate = true)
-    private val id : Int? = null,
+    val id : Int,
     val CR_No: Int,
     val Drugdtl: List<Drugdtl>,
     val InvTestCode: List<Int>,
