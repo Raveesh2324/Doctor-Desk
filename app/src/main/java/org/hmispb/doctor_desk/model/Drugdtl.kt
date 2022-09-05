@@ -1,9 +1,9 @@
 package org.hmispb.doctor_desk.model
 
 data class Drugdtl(
-    val dosageId : String,
-    val drugId: String,
-    val frequencyId : String,
+    val dosageId : Int,
+    val drugId: Int,
+    val frequencyId : Int,
     val instrunction: String,
     val noOfdays : String
 )

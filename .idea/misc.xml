@@ -7,6 +7,9 @@
         <entry key="..\:/Users/Manjot/AndroidStudioProjects/DoctorDesk/app/src/main/res/drawable/ripple.xml" value="0.2555" />
         <entry key="..\:/Users/Manjot/AndroidStudioProjects/DoctorDesk/app/src/main/res/drawable/upload.xml" value="0.2555" />
         <entry key="..\:/Users/Manjot/AndroidStudioProjects/DoctorDesk/app/src/main/res/layout/activity_main.xml" value="0.2" />
+        <entry key="..\:/Users/Manjot/AndroidStudioProjects/DoctorDesk/app/src/main/res/layout/bottomsheet_add_drug.xml" value="0.125" />
+        <entry key="..\:/Users/Manjot/AndroidStudioProjects/DoctorDesk/app/src/main/res/layout/bottomsheet_add_test.xml" value="0.125" />
+        <entry key="..\:/Users/Manjot/AndroidStudioProjects/DoctorDesk/app/src/main/res/layout/drug_list_item.xml" value="0.12447916666666667" />
         <entry key="..\:/Users/Manjot/AndroidStudioProjects/DoctorDesk/app/src/main/res/layout/login_dialog.xml" value="0.125" />
         <entry key="..\:/Users/Manjot/AndroidStudioProjects/DoctorDesk/app/src/main/res/menu/upload_menu.xml" value="0.125" />
       </map>
