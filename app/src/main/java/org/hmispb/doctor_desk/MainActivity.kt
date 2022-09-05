@@ -19,6 +19,8 @@ import org.hmispb.doctor_desk.adapter.DrugAdapter
 import org.hmispb.doctor_desk.adapter.TestAdapter
 import org.hmispb.doctor_desk.databinding.ActivityMainBinding
 import org.hmispb.doctor_desk.model.Data
+import org.hmispb.doctor_desk.model.Drugdtl
+import org.hmispb.doctor_desk.model.Prescription
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -69,6 +71,39 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this@MainActivity,"One or more fields are empty",Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            val drugs = prescriptionViewModel.drugList.value ?: mutableListOf()
+            val drugDetails = mutableListOf<Drugdtl>()
+            for(drugItem in drugs) {
+                drugDetails.add(
+                    Drugdtl(
+                    drugItem.dosage.hgnumDoseId,
+                    drugItem.drug.itemId,
+                    drugItem.frequency.frequencyId,
+                    drugItem.instruction,
+                    drugItem.days.toString()
+                ))
+            }
+
+            val tests = prescriptionViewModel.testList.value ?: mutableListOf()
+            val testCodes = mutableListOf<Int>()
+            for(test in tests) {
+                testCodes.add(test.testCode)
+            }
+            val prescription = Prescription(
+                CR_No = Integer.parseInt(binding.crno.text.toString()),
+                Drugdtl = drugDetails,
+                InvTestCode = testCodes
+            )
+            prescriptionViewModel.insertPrescription(prescription)
+            binding.crno.setText("")
+            binding.history.setText("")
+            prescriptionViewModel.drugList.postValue(mutableListOf())
+            prescriptionViewModel.testList.postValue(mutableListOf())
+            Toast.makeText(this@MainActivity,"Prescription saved",Toast.LENGTH_SHORT).show()
+        }
+
+        prescriptionViewModel.prescriptionList.observe(this) {
+            Log.d("listy",it.toString())
         }
     }
 

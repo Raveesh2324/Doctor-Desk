@@ -14,7 +14,7 @@ data class Prescription(
     val episodeCode: Int? = null,
     val episodeVisitNo: Int? = null,
     val hosp_code: Int? = null,
-    val hrgnum_is_docuploaded: Boolean = false,
+    val hrgnum_is_docuploaded: Int = 0,
     val lastVisitDate: String? = null,
     val patAge: String? = null,
     val patCat: String? = null,
