@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import org.hmispb.doctor_desk.adapter.DrugAdapter
+import org.hmispb.doctor_desk.adapter.TestAdapter
 import org.hmispb.doctor_desk.databinding.ActivityMainBinding
 import org.hmispb.doctor_desk.model.Data
 
@@ -23,6 +24,7 @@ import org.hmispb.doctor_desk.model.Data
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var drugAdapter: DrugAdapter
+    private lateinit var testAdapter: TestAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -37,8 +39,15 @@ class MainActivity : AppCompatActivity() {
         drugAdapter = DrugAdapter(mutableListOf(),prescriptionViewModel)
         binding.drugList.adapter = drugAdapter
 
+        testAdapter = TestAdapter(mutableListOf(),prescriptionViewModel)
+        binding.testList.adapter = testAdapter
+
         prescriptionViewModel.drugList.observe(this) {
             drugAdapter.updateData(it)
+        }
+
+        prescriptionViewModel.testList.observe(this) {
+            testAdapter.updateData(it)
         }
 
         binding.drugAdd.setOnClickListener {
@@ -47,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.testAdd.setOnClickListener {
-            val addTestBottomSheet = AddTestBottomSheet(data)
+            val addTestBottomSheet = AddTestBottomSheet(data,prescriptionViewModel)
             addTestBottomSheet.show(supportFragmentManager,"addTest")
         }
 

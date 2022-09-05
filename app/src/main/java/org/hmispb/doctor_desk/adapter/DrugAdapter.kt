@@ -13,9 +13,9 @@ import org.hmispb.doctor_desk.model.DrugItem
 class DrugAdapter(
     val drugList: MutableList<DrugItem>,
     private val prescriptionViewModel: PrescriptionViewModel
-): RecyclerView.Adapter<DrugAdapter.DrugViewHolder>() {
+): RecyclerView.Adapter<DrugAdapter.TestViewHolder>() {
 
-    class DrugViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class TestViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         val drugName: TextView = view.findViewById(R.id.drug_name)
         val dosage: TextView = view.findViewById(R.id.dosage)
@@ -25,14 +25,14 @@ class DrugAdapter(
         val delete : ImageView = view.findViewById(R.id.delete)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DrugViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestViewHolder {
         val adapterLayout = LayoutInflater.from(parent.context).inflate(R.layout.drug_list_item, parent, false)
-        return DrugViewHolder(adapterLayout)
+        return TestViewHolder(adapterLayout)
     }
 
     override fun getItemCount() = drugList.size
 
-    override fun onBindViewHolder(holder: DrugViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: TestViewHolder, position: Int) {
         val drugItem = drugList[position]
         holder.drugName.text = drugItem.drug.drugName
         holder.days.text = drugItem.days.toString()
@@ -40,7 +40,8 @@ class DrugAdapter(
         holder.frequency.text = drugItem.frequency.frequencyName
         holder.instructions.text = drugItem.instruction
         holder.delete.setOnClickListener {
-            drugList.removeAt(position)
+            val drugs = prescriptionViewModel.drugList.value!!
+            drugs.removeAt(position)
             notifyDataSetChanged()
         }
     }

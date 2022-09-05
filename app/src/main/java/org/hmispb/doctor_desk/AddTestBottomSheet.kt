@@ -10,7 +10,7 @@ import org.hmispb.doctor_desk.databinding.BottomsheetAddDrugBinding
 import org.hmispb.doctor_desk.databinding.BottomsheetAddTestBinding
 import org.hmispb.doctor_desk.model.Data
 
-class AddTestBottomSheet(val data : Data) : BottomSheetDialogFragment() {
+class AddTestBottomSheet(val data : Data, val prescriptionViewModel: PrescriptionViewModel) : BottomSheetDialogFragment() {
     private var _binding : BottomsheetAddTestBinding? = null
     private val binding get() = _binding!!
     override fun onCreateView(
@@ -26,6 +26,12 @@ class AddTestBottomSheet(val data : Data) : BottomSheetDialogFragment() {
         }
         binding.spinnerTest.adapter = ArrayAdapter(requireContext(),android.R.layout.simple_list_item_1,testList)
 
+        binding.addTest.setOnClickListener {
+            val tests = prescriptionViewModel.testList.value ?: mutableListOf()
+            tests.add(data.labTestName[binding.spinnerTest.selectedItemPosition])
+            prescriptionViewModel.testList.postValue(tests)
+            dismiss()
+        }
         return binding.root
     }
 
