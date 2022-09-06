@@ -40,9 +40,19 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/cr_no_initials"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_gravity="start"
+                tools:text="@tools:sample/lorem"
+                />
+
             <com.google.android.material.textfield.TextInputLayout
+                android:layout_gravity="end"
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
+                android:layout_height="@dimen/_50sdp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/crno"
@@ -58,7 +68,7 @@
                 android:id="@+id/history_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
+                android:layout_marginTop="@dimen/_20sdp"
                 android:text="History *"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/black"
