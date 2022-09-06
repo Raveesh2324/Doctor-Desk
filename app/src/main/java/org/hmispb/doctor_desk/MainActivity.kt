@@ -6,11 +6,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Adapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
@@ -21,6 +19,7 @@ import org.hmispb.doctor_desk.databinding.ActivityMainBinding
 import org.hmispb.doctor_desk.model.Data
 import org.hmispb.doctor_desk.model.Drugdtl
 import org.hmispb.doctor_desk.model.Prescription
+import java.util.*
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -32,11 +31,17 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val prescriptionViewModel = ViewModelProvider(this)[PrescriptionViewModel::class.java]
-
         val jsonString = resources!!.openRawResource(R.raw.data).bufferedReader().use { it.readText() }
         val data = Gson().fromJson(jsonString,Data::class.java)
 
+        val calender = Calendar.getInstance()
+        val year = calender.get(Calendar.YEAR)
+        val month = calender.get(Calendar.MONTH)
+        val day = calender.get(Calendar.DAY_OF_MONTH)
+
         Log.d("hello",data.labTestName.toString())
+
+        binding.crNoInitials.text = "${Persistence.hospitalStuff}$day$month$year"
 
         drugAdapter = DrugAdapter(mutableListOf(),prescriptionViewModel)
         binding.drugList.adapter = drugAdapter
