@@ -1,6 +1,7 @@
 package org.hmispb.doctor_desk.room
 
 import androidx.lifecycle.LiveData
+import org.hmispb.doctor_desk.model.LoginResponse
 import org.hmispb.doctor_desk.model.Prescription
 
 interface PrescriptionRepository {
@@ -13,4 +14,6 @@ interface PrescriptionRepository {
     fun deleteAllPrescriptions()
 
     suspend fun savePrescription(prescription: Prescription)
+
+    suspend fun login(username: String, password: String) : LoginResponse?
 }

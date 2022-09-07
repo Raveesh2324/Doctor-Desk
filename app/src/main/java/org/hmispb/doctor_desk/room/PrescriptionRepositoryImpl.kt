@@ -2,6 +2,8 @@ package org.hmispb.doctor_desk.room
 
 import androidx.lifecycle.LiveData
 import com.google.gson.Gson
+import org.hmispb.doctor_desk.model.LoginRequest
+import org.hmispb.doctor_desk.model.LoginResponse
 import org.hmispb.doctor_desk.model.Prescription
 import org.hmispb.doctor_desk.model.SavePrescriptionRequest
 
@@ -29,5 +31,9 @@ class PrescriptionRepositoryImpl(private val prescriptionDao: PrescriptionDao, p
 
         val request = SavePrescriptionRequest(inputDataJson = prescriptionString)
         prescriptionApi.savePrescription(request)
+    }
+
+    override suspend fun login(username: String, password: String): LoginResponse? {
+        return prescriptionApi.login(LoginRequest(listOf(username,password)))
     }
 }

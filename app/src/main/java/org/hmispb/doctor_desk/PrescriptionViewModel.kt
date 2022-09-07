@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.hmispb.doctor_desk.model.DrugItem
 import org.hmispb.doctor_desk.model.LabTestName
+import org.hmispb.doctor_desk.model.LoginResponse
 import org.hmispb.doctor_desk.model.Prescription
 import org.hmispb.doctor_desk.room.PrescriptionRepository
 import javax.inject.Inject
@@ -41,4 +42,7 @@ class PrescriptionViewModel @Inject constructor(private val prescriptionReposito
             prescriptionRepository.savePrescription(prescription)
         }
     }
+
+    suspend fun login(username : String, password : String) : LoginResponse? =
+        prescriptionRepository.login(username, password)
 }
