@@ -26,13 +26,13 @@ class AddDrugBottomSheet(val data : Data,val prescriptionViewModel: Prescription
         for(drug in data.drugList) {
             drugList.add(drug.drugName)
         }
-        binding.spinnerDrugName.adapter = ArrayAdapter(requireContext(),android.R.layout.simple_spinner_dropdown_item,drugList)
+        binding.spinnerDrugName.adapter = ArrayAdapter(requireContext(),android.R.layout.simple_list_item_1,drugList)
 
         val dosageList = mutableListOf<String>()
         for(dosage in data.drugDose) {
             dosageList.add(dosage.hgstrDoseName)
         }
-        binding.spinnerDosage.adapter = ArrayAdapter(requireContext(),android.R.layout.simple_spinner_dropdown_item,dosageList)
+        binding.spinnerDosage.adapter = ArrayAdapter(requireContext(),android.R.layout.simple_list_item_1,dosageList)
 
         val frequencyList = mutableListOf<String>()
         for(frequency in data.drugFrequency) {
