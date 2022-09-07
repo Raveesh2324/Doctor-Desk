@@ -136,11 +136,11 @@ class MainActivity : AppCompatActivity() {
                     ).show()
                     return@setOnClickListener
                 }
-                prescriptionViewModel.prescriptionList.observe(this@MainActivity) { patients ->
+                prescriptionViewModel.prescriptionList.observe(this@MainActivity) { prescriptions ->
                     prescriptionViewModel.upload(
                         username!!.text.toString(),
                         password!!.text.toString(),
-                        patients
+                        prescriptions
                     )
                 }
             }

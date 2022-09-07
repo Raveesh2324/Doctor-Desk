@@ -13,7 +13,7 @@ interface PrescriptionRepository {
 
     suspend fun deleteAllPrescriptions()
 
-    suspend fun savePrescription(prescription: Prescription, username: String, password: String)
+    suspend fun savePrescription(prescription: Prescription, hospitalCode: String, userId: String)
 
     suspend fun login(username: String, password: String) : LoginResponse?
 

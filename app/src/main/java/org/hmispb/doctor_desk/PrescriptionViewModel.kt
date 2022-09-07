@@ -39,7 +39,7 @@ class PrescriptionViewModel @Inject constructor(private val prescriptionReposito
         }
     }
 
-    fun savePrescription(prescription: Prescription,hospitalCode: String,userId: String) {
+    private fun savePrescription(prescription: Prescription, hospitalCode: String, userId: String) {
         viewModelScope.launch {
             prescriptionRepository.savePrescription(prescription,hospitalCode,userId)
         }
