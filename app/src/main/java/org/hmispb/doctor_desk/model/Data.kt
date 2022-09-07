@@ -8,6 +8,6 @@ data class Data(
     val drugList: List<Drug>,
     val drugFrequency: List<DrugFrequency>,
     val gender: List<Gender>,
-    val labTestName: List<LabTestName>,
+    val labTestName: List<LabTestName?>,
     val state: List<State>
 )

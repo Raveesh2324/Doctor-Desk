@@ -8,7 +8,6 @@ import android.widget.ArrayAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import org.hmispb.doctor_desk.databinding.BottomsheetAddDrugBinding
-import org.hmispb.doctor_desk.databinding.BottomsheetAddTestBinding
 import org.hmispb.doctor_desk.model.Data
 import org.hmispb.doctor_desk.model.DrugItem
 
@@ -27,13 +26,13 @@ class AddDrugBottomSheet(val data : Data,val prescriptionViewModel: Prescription
         for(drug in data.drugList) {
             drugList.add(drug.drugName)
         }
-        binding.spinnerDrugName.adapter = ArrayAdapter(requireContext(),android.R.layout.simple_list_item_1,drugList)
+        binding.spinnerDrugName.adapter = ArrayAdapter(requireContext(),android.R.layout.simple_spinner_dropdown_item,drugList)
 
         val dosageList = mutableListOf<String>()
         for(dosage in data.drugDose) {
             dosageList.add(dosage.hgstrDoseName)
         }
-        binding.spinnerDosage.adapter = ArrayAdapter(requireContext(),android.R.layout.simple_list_item_1,dosageList)
+        binding.spinnerDosage.adapter = ArrayAdapter(requireContext(),android.R.layout.simple_spinner_dropdown_item,dosageList)
 
         val frequencyList = mutableListOf<String>()
         for(frequency in data.drugFrequency) {
