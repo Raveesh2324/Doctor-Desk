@@ -1,5 +1,6 @@
 package org.hmispb.doctor_desk
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PrescriptionViewModel @Inject constructor(private val prescriptionRepository: PrescriptionRepository) : ViewModel() {
     var prescriptionList = prescriptionRepository.getAllPrescriptions()
+    var uploaded : MutableLiveData<Boolean> = MutableLiveData(false)
     val drugList : MutableLiveData<MutableList<DrugItem>> = MutableLiveData(mutableListOf())
     val testList : MutableLiveData<MutableList<LabTestName>> = MutableLiveData(mutableListOf())
 
@@ -37,12 +39,43 @@ class PrescriptionViewModel @Inject constructor(private val prescriptionReposito
         }
     }
 
-    fun savePrescription(prescription: Prescription) {
+    fun savePrescription(prescription: Prescription,hospitalCode: String,userId: String) {
         viewModelScope.launch {
-            prescriptionRepository.savePrescription(prescription)
+            prescriptionRepository.savePrescription(prescription,hospitalCode,userId)
         }
     }
 
     suspend fun login(username : String, password : String) : LoginResponse? =
         prescriptionRepository.login(username, password)
+
+    private fun setUploaded(id : Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            prescriptionRepository.setUploaded(id)
+        }
+    }
+
+    suspend fun containsNotUploaded() : Boolean {
+        return prescriptionRepository.containsNotUploaded()
+    }
+
+    fun upload(username : String, password : String,prescriptions : List<Prescription>) {
+        viewModelScope.launch {
+            try {
+                val response = login(username,password)
+                for(prescription in prescriptions) {
+                    if(response!=null && !prescription.isUploaded) {
+                        try {
+                            savePrescription(prescription, response.dataValue!![0][0], response.dataValue[0][2])
+                            setUploaded(prescription.id ?: 0)
+                        } catch (e : Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
+                uploaded.postValue(true)
+            } catch (e : Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 }

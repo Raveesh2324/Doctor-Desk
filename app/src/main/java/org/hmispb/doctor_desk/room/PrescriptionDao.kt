@@ -10,14 +10,20 @@ import org.hmispb.doctor_desk.model.Prescription
 @Dao
 interface PrescriptionDao {
     @Insert
-    fun insertPrescription(prescription : Prescription)
+    suspend fun insertPrescription(prescription : Prescription)
 
     @Query("SELECT * FROM prescription")
     fun getAllPrescriptions() : LiveData<List<Prescription>>
 
     @Delete
-    fun deletePrescription(prescription: Prescription)
+    suspend fun deletePrescription(prescription: Prescription)
 
     @Query("DELETE FROM prescription")
-    fun deleteAllPrescriptions()
+    suspend fun deleteAllPrescriptions()
+
+    @Query("UPDATE prescription SET isUploaded=1 WHERE id=:id")
+    suspend fun setUploaded(id : Int)
+
+    @Query("SELECT count(*) FROM prescription WHERE isUploaded=0")
+    suspend fun notUploadedCount() : Int
 }

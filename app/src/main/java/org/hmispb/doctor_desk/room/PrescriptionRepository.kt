@@ -5,15 +5,19 @@ import org.hmispb.doctor_desk.model.LoginResponse
 import org.hmispb.doctor_desk.model.Prescription
 
 interface PrescriptionRepository {
-    fun insertPrescription(prescription: Prescription)
+    suspend fun insertPrescription(prescription: Prescription)
 
     fun getAllPrescriptions() : LiveData<List<Prescription>>
 
-    fun deletePrescription(prescription: Prescription)
+    suspend fun deletePrescription(prescription: Prescription)
 
-    fun deleteAllPrescriptions()
+    suspend fun deleteAllPrescriptions()
 
-    suspend fun savePrescription(prescription: Prescription)
+    suspend fun savePrescription(prescription: Prescription, username: String, password: String)
 
     suspend fun login(username: String, password: String) : LoginResponse?
+
+    suspend fun setUploaded(id : Int)
+
+    suspend fun containsNotUploaded() : Boolean
 }

@@ -41,13 +41,6 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/_12ssp" />
 
-            <TextView
-                android:id="@+id/cr_no_initials"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/_50sdp"
-                android:layout_gravity="start"
-                tools:text="@tools:sample/lorem"
-                />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_gravity="end"
