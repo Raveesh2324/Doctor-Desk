@@ -26,8 +26,8 @@ class PrescriptionRepositoryImpl(private val prescriptionDao: PrescriptionDao, p
 
     override suspend fun savePrescription(prescription: Prescription) {
         val prescriptionString = Gson().toJson(prescription)
-        // TODO : hospitalCode and seatId unknown
-        val request = SavePrescriptionRequest(0,0,prescriptionString)
+
+        val request = SavePrescriptionRequest(inputDataJson = prescriptionString)
         prescriptionApi.savePrescription(request)
     }
 }

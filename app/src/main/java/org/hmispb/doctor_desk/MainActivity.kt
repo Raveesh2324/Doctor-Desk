@@ -26,11 +26,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var drugAdapter: DrugAdapter
     private lateinit var testAdapter: TestAdapter
+    private lateinit var prescriptionViewModel : PrescriptionViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val prescriptionViewModel = ViewModelProvider(this)[PrescriptionViewModel::class.java]
+        prescriptionViewModel = ViewModelProvider(this)[PrescriptionViewModel::class.java]
         val jsonString = resources!!.openRawResource(R.raw.data).bufferedReader().use { it.readText() }
         val data = Gson().fromJson(jsonString,Data::class.java)
 
@@ -127,14 +128,18 @@ class MainActivity : AppCompatActivity() {
             val password = dialog.findViewById<EditText>(R.id.password)
             val upload = dialog.findViewById<Button>(R.id.upload)
             upload?.setOnClickListener {
-                if(username?.text.toString().isEmpty() || password?.text.isNullOrEmpty()) {
-                    if(username?.text.toString().isEmpty())
-                        username?.error = "Required"
-                    if(password?.text.toString().isEmpty())
-                        password?.error = "Required"
-                    Toast.makeText(this@MainActivity,"One or more fields are empty", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
+                prescriptionViewModel.savePrescription(prescriptionViewModel.prescriptionList.value?.get(0)!! )
+            }
+            //TODO upload using user name and password to do, will consult with the team, above temp till then, but it works
+//            upload?.setOnClickListener {
+//                if(username?.text.toString().isEmpty() || password?.text.isNullOrEmpty()) {
+//                    if(username?.text.toString().isEmpty())
+//                        username?.error = "Required"
+//                    if(password?.text.toString().isEmpty())
+//                        password?.error = "Required"
+//                    Toast.makeText(this@MainActivity,"One or more fields are empty", Toast.LENGTH_SHORT).show()
+//                    return@setOnClickListener
+//                }
 //                patientViewModel.upload(username!!.text.toString(),password!!.text.toString())
             }
 //            patientViewModel.uploaded.observe(this@MainActivity) { uploaded ->
@@ -144,7 +149,7 @@ class MainActivity : AppCompatActivity() {
 //                    patientViewModel.uploaded.value = false
 //                }
 //            }
-        }
+//        }
         dialog.show()
         return super.onOptionsItemSelected(item)
     }
