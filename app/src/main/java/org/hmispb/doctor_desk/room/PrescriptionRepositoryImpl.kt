@@ -10,7 +10,7 @@ import org.hmispb.doctor_desk.model.SavePrescriptionRequest
 class PrescriptionRepositoryImpl(private val prescriptionDao: PrescriptionDao, private val prescriptionApi: PrescriptionApi) :
     PrescriptionRepository {
 
-    override fun insertPrescription(prescription: Prescription) {
+    override suspend fun insertPrescription(prescription: Prescription) {
         prescriptionDao.insertPrescription(prescription)
     }
 
@@ -18,22 +18,33 @@ class PrescriptionRepositoryImpl(private val prescriptionDao: PrescriptionDao, p
         return prescriptionDao.getAllPrescriptions()
     }
 
-    override fun deletePrescription(prescription: Prescription) {
+    override suspend fun deletePrescription(prescription: Prescription) {
         prescriptionDao.deletePrescription(prescription)
     }
 
-    override fun deleteAllPrescriptions() {
+    override suspend fun deleteAllPrescriptions() {
         prescriptionDao.deleteAllPrescriptions()
     }
 
-    override suspend fun savePrescription(prescription: Prescription) {
+    override suspend fun savePrescription(
+        prescription: Prescription,
+        hospitalCode: String,
+        userId: String
+    ) {
         val prescriptionString = Gson().toJson(prescription)
-
-        val request = SavePrescriptionRequest(inputDataJson = prescriptionString)
+        val request = SavePrescriptionRequest(hospitalCode,userId,prescriptionString)
         prescriptionApi.savePrescription(request)
     }
 
     override suspend fun login(username: String, password: String): LoginResponse? {
         return prescriptionApi.login(LoginRequest(listOf(username,password)))
+    }
+
+    override suspend fun setUploaded(id: Int) {
+        prescriptionDao.setUploaded(id)
+    }
+
+    override suspend fun containsNotUploaded(): Boolean {
+        return prescriptionDao.notUploadedCount() > 0
     }
 }

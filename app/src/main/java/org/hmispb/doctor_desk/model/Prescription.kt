@@ -25,5 +25,6 @@ data class Prescription(
     val patQueueNo: String? = null,
     val patVisitType: String? = null,
     val pat_Name: String? = null,
-    val seatId: Int? = null
+    val seatId: Int? = null,
+    var isUploaded : Boolean = false
 )

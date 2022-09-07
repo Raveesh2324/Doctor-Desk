@@ -11,8 +11,10 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import org.hmispb.doctor_desk.adapter.DrugAdapter
 import org.hmispb.doctor_desk.adapter.TestAdapter
 import org.hmispb.doctor_desk.databinding.ActivityMainBinding
@@ -31,18 +33,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         prescriptionViewModel = ViewModelProvider(this)[PrescriptionViewModel::class.java]
         val jsonString = resources!!.openRawResource(R.raw.data).bufferedReader().use { it.readText() }
         val data = Gson().fromJson(jsonString,Data::class.java)
 
-        val calender = Calendar.getInstance()
-        val year = calender.get(Calendar.YEAR)
-        val month = calender.get(Calendar.MONTH)
-        val day = calender.get(Calendar.DAY_OF_MONTH)
-
         Log.d("hello",data.labTestName.toString())
-
-        binding.crNoInitials.text = "${Persistence.hospitalStuff}$day$month$year"
 
         drugAdapter = DrugAdapter(mutableListOf(),prescriptionViewModel)
         binding.drugList.adapter = drugAdapter
@@ -101,10 +97,10 @@ class MainActivity : AppCompatActivity() {
                 InvTestCode = testCodes
             )
             prescriptionViewModel.insertPrescription(prescription)
-            binding.crno.setText("")
-            binding.history.setText("")
-            prescriptionViewModel.drugList.postValue(mutableListOf())
-            prescriptionViewModel.testList.postValue(mutableListOf())
+//            binding.crno.setText("")
+//            binding.history.setText("")
+//            prescriptionViewModel.drugList.postValue(mutableListOf())
+//            prescriptionViewModel.testList.postValue(mutableListOf())
             Toast.makeText(this@MainActivity,"Prescription saved",Toast.LENGTH_SHORT).show()
         }
 
@@ -119,7 +115,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val view = LayoutInflater.from(this).inflate(R.layout.login_dialog,null,false)
+        val view = LayoutInflater.from(this).inflate(R.layout.login_dialog, null, false)
         val dialog = AlertDialog.Builder(this)
             .setView(view)
             .create()
@@ -128,28 +124,40 @@ class MainActivity : AppCompatActivity() {
             val password = dialog.findViewById<EditText>(R.id.password)
             val upload = dialog.findViewById<Button>(R.id.upload)
             upload?.setOnClickListener {
-                prescriptionViewModel.savePrescription(prescriptionViewModel.prescriptionList.value?.get(0)!! )
+                if (username?.text.toString().isEmpty() || password?.text.isNullOrEmpty()) {
+                    if (username?.text.toString().isEmpty())
+                        username?.error = "Required"
+                    if (password?.text.toString().isEmpty())
+                        password?.error = "Required"
+                    Toast.makeText(
+                        this@MainActivity,
+                        "One or more fields are empty",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@setOnClickListener
+                }
+                prescriptionViewModel.prescriptionList.observe(this@MainActivity) { patients ->
+                    prescriptionViewModel.upload(
+                        username!!.text.toString(),
+                        password!!.text.toString(),
+                        patients
+                    )
+                }
             }
-            //TODO upload using user name and password to do, will consult with the team, above temp till then, but it works
-//            upload?.setOnClickListener {
-//                if(username?.text.toString().isEmpty() || password?.text.isNullOrEmpty()) {
-//                    if(username?.text.toString().isEmpty())
-//                        username?.error = "Required"
-//                    if(password?.text.toString().isEmpty())
-//                        password?.error = "Required"
-//                    Toast.makeText(this@MainActivity,"One or more fields are empty", Toast.LENGTH_SHORT).show()
-//                    return@setOnClickListener
-//                }
-//                patientViewModel.upload(username!!.text.toString(),password!!.text.toString())
+            prescriptionViewModel.uploaded.observe(this@MainActivity) { uploaded ->
+                lifecycleScope.launch {
+                    if (uploaded && dialog.isShowing) {
+                        Toast.makeText(
+                            this@MainActivity,
+                            if (prescriptionViewModel.containsNotUploaded()) "One or more entries were not uploaded" else "Data successfully uploaded",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        dialogInterface.cancel()
+                        prescriptionViewModel.uploaded.postValue(false)
+                    }
+                }
             }
-//            patientViewModel.uploaded.observe(this@MainActivity) { uploaded ->
-//                if(uploaded) {
-//                    Toast.makeText(this@MainActivity,"Data successfully uploaded", Toast.LENGTH_SHORT).show()
-//                    dialogInterface.cancel()
-//                    patientViewModel.uploaded.value = false
-//                }
-//            }
-//        }
+        }
         dialog.show()
         return super.onOptionsItemSelected(item)
     }
