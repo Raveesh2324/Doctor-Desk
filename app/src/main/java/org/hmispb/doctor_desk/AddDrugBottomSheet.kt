@@ -8,7 +8,6 @@ import android.widget.ArrayAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import org.hmispb.doctor_desk.databinding.BottomsheetAddDrugBinding
-import org.hmispb.doctor_desk.databinding.BottomsheetAddTestBinding
 import org.hmispb.doctor_desk.model.Data
 import org.hmispb.doctor_desk.model.DrugItem
 
