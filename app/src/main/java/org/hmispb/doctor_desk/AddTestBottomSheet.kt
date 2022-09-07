@@ -1,13 +1,11 @@
 package org.hmispb.doctor_desk
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import org.hmispb.doctor_desk.databinding.BottomsheetAddDrugBinding
 import org.hmispb.doctor_desk.databinding.BottomsheetAddTestBinding
 import org.hmispb.doctor_desk.model.Data
 import org.hmispb.doctor_desk.model.LabTestName
