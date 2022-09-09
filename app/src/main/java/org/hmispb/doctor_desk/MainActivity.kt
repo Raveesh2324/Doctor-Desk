@@ -2,6 +2,13 @@ package org.hmispb.doctor_desk
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CancellationSignal
+import android.os.ParcelFileDescriptor
+import android.print.PageRange
+import android.print.PrintAttributes
+import android.print.PrintDocumentAdapter
+import android.print.PrintManager
+import android.print.pdf.PrintedPdfDocument
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -106,6 +113,31 @@ class MainActivity : AppCompatActivity() {
 
         prescriptionViewModel.prescriptionList.observe(this) {
             Log.d("listy",it.toString())
+        }
+
+        binding.print.setOnClickListener {
+            val printManager = getSystemService(PRINT_SERVICE) as PrintManager
+            printManager.print("Doctor Desk Document",object : PrintDocumentAdapter(){
+                override fun onLayout(
+                    p0: PrintAttributes?,
+                    p1: PrintAttributes?,
+                    p2: CancellationSignal?,
+                    p3: LayoutResultCallback?,
+                    p4: Bundle?
+                ) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onWrite(
+                    p0: Array<out PageRange>?,
+                    p1: ParcelFileDescriptor?,
+                    p2: CancellationSignal?,
+                    p3: WriteResultCallback?
+                ) {
+                    TODO("Not yet implemented")
+                }
+
+            },null)
         }
     }
 

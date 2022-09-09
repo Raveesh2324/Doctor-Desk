@@ -178,16 +178,42 @@
                 android:id="@+id/drug_list"/>
 
 
-            <Button
-                android:id="@+id/submit"
-                android:layout_width="170dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_marginTop="50dp"
                 android:layout_marginBottom="20dp"
-                android:padding="10dp"
-                android:text="Submit"
-                android:textAllCaps="true" />
+                android:orientation="horizontal">
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+                <Button
+                    android:id="@+id/submit"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="10dp"
+                    android:text="Submit"
+                    android:textAllCaps="true" />
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+                <Button
+                    android:id="@+id/print"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="10dp"
+                    android:text="Print"
+                    android:textAllCaps="true" />
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
 
 
         </LinearLayout>
