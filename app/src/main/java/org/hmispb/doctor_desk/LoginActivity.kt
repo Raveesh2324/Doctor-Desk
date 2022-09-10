@@ -11,11 +11,11 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.hmispb.doctor_desk.App.Companion.appContext
-import org.hmispb.doctor_desk.Utils.Utils.HOSPITAL_CODE
-import org.hmispb.doctor_desk.Utils.Utils.HOSPITAL_NAME
-import org.hmispb.doctor_desk.Utils.Utils.LOGIN_RESPONSE_PREF
-import org.hmispb.doctor_desk.Utils.Utils.USERNAME
-import org.hmispb.doctor_desk.Utils.Utils.USER_ID
+import org.hmispb.doctor_desk.Utils.HOSPITAL_CODE
+import org.hmispb.doctor_desk.Utils.HOSPITAL_NAME
+import org.hmispb.doctor_desk.Utils.LOGIN_RESPONSE_PREF
+import org.hmispb.doctor_desk.Utils.USERNAME
+import org.hmispb.doctor_desk.Utils.USER_ID
 import org.hmispb.doctor_desk.databinding.ActivityLoginBinding
 
 @AndroidEntryPoint

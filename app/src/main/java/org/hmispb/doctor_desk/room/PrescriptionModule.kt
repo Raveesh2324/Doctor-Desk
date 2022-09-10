@@ -12,8 +12,8 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.hmispb.doctor_desk.Utils.Utils.password
-import org.hmispb.doctor_desk.Utils.Utils.username
+import org.hmispb.doctor_desk.Utils.password
+import org.hmispb.doctor_desk.Utils.username
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit

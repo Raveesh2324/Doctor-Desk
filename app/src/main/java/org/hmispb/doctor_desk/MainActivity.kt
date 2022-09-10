@@ -22,6 +22,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
+import com.tejpratapsingh.pdfcreator.utils.FileManager
+import com.tejpratapsingh.pdfcreator.utils.PDFUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.hmispb.doctor_desk.adapter.DrugAdapter
@@ -30,8 +32,11 @@ import org.hmispb.doctor_desk.databinding.ActivityMainBinding
 import org.hmispb.doctor_desk.model.Data
 import org.hmispb.doctor_desk.model.Drugdtl
 import org.hmispb.doctor_desk.model.Prescription
+import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
+import java.lang.Exception
 import java.util.*
 
 
@@ -45,6 +50,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val sharedPreferences = getSharedPreferences(Utils.LOGIN_RESPONSE_PREF, MODE_PRIVATE)
 
         prescriptionViewModel = ViewModelProvider(this)[PrescriptionViewModel::class.java]
         val jsonString = resources!!.openRawResource(R.raw.data).bufferedReader().use { it.readText() }
@@ -131,80 +138,303 @@ class MainActivity : AppCompatActivity() {
 
         binding.print.setOnClickListener {
             val printManager = getSystemService(PRINT_SERVICE) as PrintManager
-            printManager.print("Doctor Desk Document",object : PrintDocumentAdapter(){
-                private var pdfDocument: PrintedPdfDocument? = null
-                override fun onLayout(
-                    oldAttributes: PrintAttributes?,
-                    newAttributes: PrintAttributes,
-                    cancellationSignal: CancellationSignal?,
-                    callback: LayoutResultCallback,
-                    extras: Bundle?
-                ) {
-                    pdfDocument = PrintedPdfDocument(this@MainActivity,newAttributes)
-                    if(cancellationSignal?.isCanceled==true) {
-                        callback.onLayoutCancelled()
-                        return
-                    }
-                    val info = PrintDocumentInfo.Builder("doctor_desk_prescription.pdf")
-                        .setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
-                        .setPageCount(1)
-                        .build()
-                    callback.onLayoutFinished(info,oldAttributes!=newAttributes)
+            val file = FileManager.getInstance().createTempFile(this@MainActivity,"pdf",false)
+            var html = ""
+            prescriptionViewModel.drugList.observe(this) {drugs ->
+                html = """
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta http-equiv="Content-Type" content="text/html;charset=utf-32" >
+                    <meta charset="utf-32">
+                </head>
+                <style>
+                .header {
+                    font-size: 37px;
+                    font-weight: bold;
+                    margin: 15px;
                 }
 
-                override fun onWrite(
-                    p0: Array<out PageRange>?,
-                    destination: ParcelFileDescriptor?,
-                    cancellationSignal: CancellationSignal?,
-                    callback: WriteResultCallback?
-                ) {
-                    val page = pdfDocument?.startPage(0)
-                    if(cancellationSignal?.isCanceled==true) {
-                        callback?.onWriteCancelled()
-                        pdfDocument?.close()
-                        pdfDocument = null
-                        return
-                    }
-                    drawPage(page)
-                    pdfDocument?.finishPage(page)
-
-                    try {
-                        pdfDocument?.writeTo(
-                            FileOutputStream(
-                                destination?.fileDescriptor
-                            )
-                        )
-                    } catch (e: IOException) {
-                        callback?.onWriteFailed(e.toString())
-                        return
-                    } finally {
-                        pdfDocument?.close()
-                        pdfDocument = null
-                    }
-                    callback?.onWriteFinished(arrayOf(PageRange.ALL_PAGES))
-                }
-                // TODO: how to do aaaaaaaaaaa
-                private fun drawPage(page: PdfDocument.Page?) {
-                    val canvas: Canvas? = page?.canvas
-
-                    // units are in points (1/72 of an inch)
-                    val titleBaseLine = 72f
-                    val leftMargin = 54f
-                    val paint = Paint()
-                    paint.color = Color.BLACK
-                    paint.textSize = 36f
-                    val format = BitmapFactory.decodeResource(resources!!,R.drawable.img23)
-                    canvas?.drawBitmap(format,0f,0f,null)
-//                    canvas?.drawBitmap()
-                    Log.d("sadge","${canvas?.height} ${canvas?.width}")
-                    canvas?.drawText("Test Title", leftMargin, titleBaseLine, paint)
-                    paint.textSize = 11f
-                    canvas?.drawText("Test paragraph", leftMargin, titleBaseLine + 25, paint)
-                    paint.color = Color.BLUE
-                    canvas?.drawRect(100f, 100f, 172f, 172f, paint)
+                .presc {
+                    width: 100%;
+                    margin: 20px auto;
+                    font-size: 25px;
                 }
 
-            },null)
+                table,th,td {
+                    border: 2px solid black;
+                    border-collapse: collapse;
+                }
+
+                th,td {
+                    padding: 5px;
+                }
+
+                .tab {
+                    width : 100%;
+                    margin: 20px auto;
+                }
+
+                .drugs {
+                    display: flex;
+                    flex-direction: column;
+                    padding: 10px;
+                }
+                </style>
+                <body>
+                    <center class="header">
+                        ${sharedPreferences.getString(Utils.HOSPITAL_NAME,"")}
+                    </center>
+                    <hr width="100%" color="black" size="3px">
+                    <div class="presc">OPD PRESCRIPTION</div>
+                    <table class="tab">
+                        <tr>
+                            <td>
+                                CR No. ਸੀਆਰ ਨੰ. : <b>${binding.crno.text.toString()}</b>
+                            </td>
+                            <td>
+                                Date & Time ਸੀਆਰ ਨੰ.: <b>08/09/2022</b>
+                            </td>
+                            <td>
+                                Category ਸ਼ਣੇ ◌ੀ: <b></b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Patient Name ਮਰੀਜ਼ ਦਾ ਨਾਮ: <b>${binding.name.text.toString()}</b>
+                            </td>
+                            <td>
+                                Age/Gender ਉਮਰ / ਿ◌ਲੰਗ: <b>75 Yr/${when(binding.genderRadioGroup.checkedRadioButtonId){
+                    R.id.male -> "M"
+                    R.id.female -> "F"
+                    R.id.transgender -> "T"
+                    else -> ""
+                }}</b>
+                            </td>
+                            <td>
+                                Father/Spouse/Mother Name  ਪਤਾ/ਿਪਤ<br>/ਪਤਨੀ/ਮਾਂ ਕਾ ਨਾਮ: <b>${binding.father.text.toString()}</b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                Residence : <b></b>
+                            </td>
+                            <td>
+                                Mobile No. :<b>1232423432</b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                VITALS/GE :
+                            </td>
+                            <td colspan="2">
+                                
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                CHIEF COMPLAINT :
+                            </td>
+                            <td colspan="2">
+                                ${binding.chiefComplaint.text.toString()}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                HISTORY OF PRESENT ILLNESS : 
+                            </td>
+                            <td colspan="2">
+                                ${binding.history.text.toString()}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <b>Rx:</b>
+            """.trimIndent()
+                for(i in drugs.indices) {
+                    val drug = drugs[i]
+                    val element = """
+                        <div class="drugs">
+                                    <div>${i+1}. <b>${drug.drug.drugName}</b>, ${drug.dosage.hgstrDoseName}, ${drug.frequency.frequencyName}, ${drug.days} Day${if(drug.days>1) "s" else ""},</div>
+                    """.trimIndent()
+                    html += element
+                }
+                html += """
+                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </body>
+                </html>
+            """.trimIndent()
+            }
+            PDFUtil.generatePDFFromHTML(this@MainActivity,file,html, object : PDFPrint.OnPDFPrintListener {
+                override fun onSuccess(file: File?) {
+                    printManager.print("Doctor Desk Document",object : PrintDocumentAdapter(){
+                        private var pdfDocument: PrintedPdfDocument? = null
+                        override fun onLayout(
+                            oldAttributes: PrintAttributes?,
+                            newAttributes: PrintAttributes,
+                            cancellationSignal: CancellationSignal?,
+                            callback: LayoutResultCallback,
+                            extras: Bundle?
+                        ) {
+                            pdfDocument = PrintedPdfDocument(this@MainActivity,newAttributes)
+                            if(cancellationSignal?.isCanceled==true) {
+                                callback.onLayoutCancelled()
+                                return
+                            }
+                            val info = PrintDocumentInfo.Builder("doctor_desk_prescription.pdf")
+                                .setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
+                                .setPageCount(1)
+                                .build()
+                            callback.onLayoutFinished(info,oldAttributes!=newAttributes)
+                        }
+
+                        override fun onWrite(
+                            p0: Array<out PageRange>?,
+                            destination: ParcelFileDescriptor?,
+                            cancellationSignal: CancellationSignal?,
+                            callback: WriteResultCallback?
+                        ) {
+//                    val page = pdfDocument?.startPage(0)
+                            if(cancellationSignal?.isCanceled==true) {
+                                callback?.onWriteCancelled()
+                                pdfDocument?.close()
+                                pdfDocument = null
+                                return
+                            }
+//                    drawPage(page)
+//                    pdfDocument?.finishPage(page)
+
+                            try {
+                                val inputStream = FileInputStream(file)
+                                val outputStream = FileOutputStream(destination?.fileDescriptor)
+                                val buf = ByteArray(16384)
+                                var size: Int
+
+                                while (inputStream.read(buf).also { size = it } >= 0) {
+                                    outputStream.write(buf, 0, size)
+                                }
+//                        pdfDocument?.writeTo(
+//                            FileOutputStream(
+//                                destination?.fileDescriptor
+//                            )
+//                        )
+                            } catch (e: IOException) {
+                                callback?.onWriteFailed(e.toString())
+                                return
+                            } finally {
+                                pdfDocument?.close()
+                                pdfDocument = null
+                            }
+                            callback?.onWriteFinished(arrayOf(PageRange.ALL_PAGES))
+                        }
+                        // TODO: how to do aaaaaaaaaaa
+                        private fun drawPage(page: PdfDocument.Page?) {
+                            val canvas: Canvas? = page?.canvas
+
+                            // units are in points (1/72 of an inch)
+                            val titleBaseLine = 72f
+                            val leftMargin = 54f
+                            val view = layoutInflater.inflate(R.layout.login_dialog,null,false)
+                            view.draw(canvas)
+//                    val paint = Paint()
+//                    paint.color = Color.BLACK
+//                    paint.textSize = 36f
+//                    val format = BitmapFactory.decodeResource(resources!!,R.drawable.img23)
+//                    canvas?.drawBitmap(format,0f,0f,null)
+//                    Log.d("sadge","${canvas?.height} ${canvas?.width}")
+//                    canvas?.drawText("Test Title", leftMargin, titleBaseLine, paint)
+//                    paint.textSize = 11f
+//                    canvas?.drawText("Test paragraph", leftMargin, titleBaseLine + 25, paint)
+//                    paint.color = Color.BLUE
+//                    canvas?.drawRect(100f, 100f, 172f, 172f, paint)
+                        }
+
+                    },null)
+                }
+
+                override fun onError(exception: Exception?) {
+                    exception?.printStackTrace()
+                }
+
+            })
+//            printManager.print("Doctor Desk Document",object : PrintDocumentAdapter(){
+//                private var pdfDocument: PrintedPdfDocument? = null
+//                override fun onLayout(
+//                    oldAttributes: PrintAttributes?,
+//                    newAttributes: PrintAttributes,
+//                    cancellationSignal: CancellationSignal?,
+//                    callback: LayoutResultCallback,
+//                    extras: Bundle?
+//                ) {
+//                    pdfDocument = PrintedPdfDocument(this@MainActivity,newAttributes)
+//                    if(cancellationSignal?.isCanceled==true) {
+//                        callback.onLayoutCancelled()
+//                        return
+//                    }
+//                    val info = PrintDocumentInfo.Builder("doctor_desk_prescription.pdf")
+//                        .setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
+//                        .setPageCount(1)
+//                        .build()
+//                    callback.onLayoutFinished(info,oldAttributes!=newAttributes)
+//                }
+//
+//                override fun onWrite(
+//                    p0: Array<out PageRange>?,
+//                    destination: ParcelFileDescriptor?,
+//                    cancellationSignal: CancellationSignal?,
+//                    callback: WriteResultCallback?
+//                ) {
+//                    val page = pdfDocument?.startPage(0)
+//                    if(cancellationSignal?.isCanceled==true) {
+//                        callback?.onWriteCancelled()
+//                        pdfDocument?.close()
+//                        pdfDocument = null
+//                        return
+//                    }
+//                    drawPage(page)
+//                    pdfDocument?.finishPage(page)
+//
+//                    try {
+//                        pdfDocument?.writeTo(
+//                            FileOutputStream(
+//                                destination?.fileDescriptor
+//                            )
+//                        )
+//                    } catch (e: IOException) {
+//                        callback?.onWriteFailed(e.toString())
+//                        return
+//                    } finally {
+//                        pdfDocument?.close()
+//                        pdfDocument = null
+//                    }
+//                    callback?.onWriteFinished(arrayOf(PageRange.ALL_PAGES))
+//                }
+//                // TODO: how to do aaaaaaaaaaa
+//                private fun drawPage(page: PdfDocument.Page?) {
+//                    val canvas: Canvas? = page?.canvas
+//
+//                    // units are in points (1/72 of an inch)
+//                    val titleBaseLine = 72f
+//                    val leftMargin = 54f
+//                    val view = layoutInflater.inflate(R.layout.login_dialog,null,false)
+//                    view.draw(canvas)
+////                    val paint = Paint()
+////                    paint.color = Color.BLACK
+////                    paint.textSize = 36f
+////                    val format = BitmapFactory.decodeResource(resources!!,R.drawable.img23)
+////                    canvas?.drawBitmap(format,0f,0f,null)
+////                    Log.d("sadge","${canvas?.height} ${canvas?.width}")
+////                    canvas?.drawText("Test Title", leftMargin, titleBaseLine, paint)
+////                    paint.textSize = 11f
+////                    canvas?.drawText("Test paragraph", leftMargin, titleBaseLine + 25, paint)
+////                    paint.color = Color.BLUE
+////                    canvas?.drawRect(100f, 100f, 172f, 172f, paint)
+//                }
+//
+//            },null)
         }
     }
 
