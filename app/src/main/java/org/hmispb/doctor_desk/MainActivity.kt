@@ -1,13 +1,14 @@
 package org.hmispb.doctor_desk
 
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.pdf.PdfDocument
 import android.os.Bundle
 import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
-import android.print.PageRange
-import android.print.PrintAttributes
-import android.print.PrintDocumentAdapter
-import android.print.PrintManager
+import android.print.*
 import android.print.pdf.PrintedPdfDocument
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,6 +18,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
@@ -28,7 +30,10 @@ import org.hmispb.doctor_desk.databinding.ActivityMainBinding
 import org.hmispb.doctor_desk.model.Data
 import org.hmispb.doctor_desk.model.Drugdtl
 import org.hmispb.doctor_desk.model.Prescription
+import java.io.FileOutputStream
+import java.io.IOException
 import java.util.*
+
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -72,11 +77,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.submit.setOnClickListener {
-            if(binding.crno.text.isNullOrEmpty() || binding.history.text.isNullOrEmpty()) {
+            if(binding.crno.text.isNullOrEmpty() || binding.history.text.isNullOrEmpty() || binding.chiefComplaint.text.isNullOrEmpty()) {
                 if(binding.crno.text.isNullOrEmpty())
                     binding.crno.error = "Required"
                 if(binding.history.text.isNullOrEmpty())
-                    binding.history.text.isNullOrEmpty()
+                    binding.history.error = "Required"
+                if(binding.chiefComplaint.text.isNullOrEmpty())
+                    binding.chiefComplaint.error = "Required"
                 Toast.makeText(this@MainActivity,"One or more fields are empty",Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -101,7 +108,14 @@ class MainActivity : AppCompatActivity() {
             val prescription = Prescription(
                 CR_No = Integer.parseInt(binding.crno.text.toString()),
                 Drugdtl = drugDetails,
-                InvTestCode = testCodes
+                InvTestCode = testCodes,
+                pat_Name = if(binding.name.text.isNullOrEmpty()) null else binding.name.text.toString(),
+                patGender = when(binding.genderRadioGroup.checkedRadioButtonId) {
+                    R.id.male -> "M"
+                    R.id.female -> "F"
+                    R.id.transgender -> "T"
+                    else -> null
+                }
             )
             prescriptionViewModel.insertPrescription(prescription)
 //            binding.crno.setText("")
@@ -118,23 +132,75 @@ class MainActivity : AppCompatActivity() {
         binding.print.setOnClickListener {
             val printManager = getSystemService(PRINT_SERVICE) as PrintManager
             printManager.print("Doctor Desk Document",object : PrintDocumentAdapter(){
+                private var pdfDocument: PrintedPdfDocument? = null
                 override fun onLayout(
-                    p0: PrintAttributes?,
-                    p1: PrintAttributes?,
-                    p2: CancellationSignal?,
-                    p3: LayoutResultCallback?,
-                    p4: Bundle?
+                    oldAttributes: PrintAttributes?,
+                    newAttributes: PrintAttributes,
+                    cancellationSignal: CancellationSignal?,
+                    callback: LayoutResultCallback,
+                    extras: Bundle?
                 ) {
-                    TODO("Not yet implemented")
+                    pdfDocument = PrintedPdfDocument(this@MainActivity,newAttributes)
+                    if(cancellationSignal?.isCanceled==true) {
+                        callback.onLayoutCancelled()
+                        return
+                    }
+                    val info = PrintDocumentInfo.Builder("doctor_desk_prescription.pdf")
+                        .setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
+                        .setPageCount(1)
+                        .build()
+                    callback.onLayoutFinished(info,oldAttributes!=newAttributes)
                 }
 
                 override fun onWrite(
                     p0: Array<out PageRange>?,
-                    p1: ParcelFileDescriptor?,
-                    p2: CancellationSignal?,
-                    p3: WriteResultCallback?
+                    destination: ParcelFileDescriptor?,
+                    cancellationSignal: CancellationSignal?,
+                    callback: WriteResultCallback?
                 ) {
-                    TODO("Not yet implemented")
+                    val page = pdfDocument?.startPage(0)
+                    if(cancellationSignal?.isCanceled==true) {
+                        callback?.onWriteCancelled()
+                        pdfDocument?.close()
+                        pdfDocument = null
+                        return
+                    }
+                    drawPage(page)
+                    pdfDocument?.finishPage(page)
+
+                    try {
+                        pdfDocument?.writeTo(
+                            FileOutputStream(
+                                destination?.fileDescriptor
+                            )
+                        )
+                    } catch (e: IOException) {
+                        callback?.onWriteFailed(e.toString())
+                        return
+                    } finally {
+                        pdfDocument?.close()
+                        pdfDocument = null
+                    }
+                    callback?.onWriteFinished(arrayOf(PageRange.ALL_PAGES))
+                }
+
+                private fun drawPage(page: PdfDocument.Page?) {
+                    val canvas: Canvas? = page?.canvas
+
+                    // units are in points (1/72 of an inch)
+                    val titleBaseLine = 72f
+                    val leftMargin = 54f
+                    val paint = Paint()
+                    paint.color = Color.BLACK
+                    paint.textSize = 36f
+                    val format = BitmapFactory.decodeResource(resources!!,R.drawable.img)
+
+                    canvas?.drawBitmap(format,leftMargin,titleBaseLine,paint)
+//                    canvas?.drawText("Test Title", leftMargin, titleBaseLine, paint)
+//                    paint.textSize = 11f
+//                    canvas?.drawText("Test paragraph", leftMargin, titleBaseLine + 25, paint)
+//                    paint.color = Color.BLUE
+//                    canvas?.drawRect(100f, 100f, 172f, 172f, paint)
                 }
 
             },null)
