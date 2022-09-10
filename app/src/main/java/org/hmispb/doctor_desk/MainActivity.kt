@@ -183,7 +183,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     callback?.onWriteFinished(arrayOf(PageRange.ALL_PAGES))
                 }
-
+                // TODO: how to do aaaaaaaaaaa
                 private fun drawPage(page: PdfDocument.Page?) {
                     val canvas: Canvas? = page?.canvas
 
@@ -193,14 +193,15 @@ class MainActivity : AppCompatActivity() {
                     val paint = Paint()
                     paint.color = Color.BLACK
                     paint.textSize = 36f
-                    val format = BitmapFactory.decodeResource(resources!!,R.drawable.img)
-
-                    canvas?.drawBitmap(format,leftMargin,titleBaseLine,paint)
-//                    canvas?.drawText("Test Title", leftMargin, titleBaseLine, paint)
-//                    paint.textSize = 11f
-//                    canvas?.drawText("Test paragraph", leftMargin, titleBaseLine + 25, paint)
-//                    paint.color = Color.BLUE
-//                    canvas?.drawRect(100f, 100f, 172f, 172f, paint)
+                    val format = BitmapFactory.decodeResource(resources!!,R.drawable.img23)
+                    canvas?.drawBitmap(format,0f,0f,null)
+//                    canvas?.drawBitmap()
+                    Log.d("sadge","${canvas?.height} ${canvas?.width}")
+                    canvas?.drawText("Test Title", leftMargin, titleBaseLine, paint)
+                    paint.textSize = 11f
+                    canvas?.drawText("Test paragraph", leftMargin, titleBaseLine + 25, paint)
+                    paint.color = Color.BLUE
+                    canvas?.drawRect(100f, 100f, 172f, 172f, paint)
                 }
 
             },null)
