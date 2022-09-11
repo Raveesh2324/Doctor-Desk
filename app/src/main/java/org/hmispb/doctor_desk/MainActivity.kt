@@ -201,7 +201,7 @@ class MainActivity : AppCompatActivity() {
                                 CR No. : <b>${binding.crno.text.toString()}</b>
                             </td>
                             <td>
-                                Date & Time : <b>${"${if(currentDate.date<10) "0" else ""}${currentDate.date}/${if(currentMonth<10) "0" else ""}${currentMonth}/${currentYear.toString().substring(2)}"}</b>
+                                Date & Time : <br><b>${"${if(currentDate.date<10) "0" else ""}${currentDate.date}/${if(currentMonth<10) "0" else ""}${currentMonth}/${currentYear.toString().substring(2)}"}</b>
                             </td>
                             <td>
                                 Category : <b></b>
@@ -212,7 +212,7 @@ class MainActivity : AppCompatActivity() {
                                 Patient Name : <b>${binding.name.text.toString()}</b>
                             </td>
                             <td>
-                                Age/Gender : <b>${binding.age.text.toString()} ${ageUnits[binding.ageUnits.selectedItemPosition]}/${when(binding.genderRadioGroup.checkedRadioButtonId){
+                                Age/Gender :<br> <b>${binding.age.text.toString()} ${ageUnits[binding.ageUnits.selectedItemPosition]}/${when(binding.genderRadioGroup.checkedRadioButtonId){
                     R.id.male -> "M"
                     R.id.female -> "F"
                     R.id.transgender -> "T"
@@ -220,7 +220,7 @@ class MainActivity : AppCompatActivity() {
                 }}</b>
                             </td>
                             <td>
-                                Father/Spouse/Mother Name : <b>${binding.father.text.toString()}</b>
+                                Father/Spouse/Mother Name : <br><b>${binding.father.text.toString()}</b>
                             </td>
                         </tr>
                         <tr>
