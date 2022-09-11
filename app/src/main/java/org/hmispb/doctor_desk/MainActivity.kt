@@ -14,6 +14,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -56,6 +57,10 @@ class MainActivity : AppCompatActivity() {
         prescriptionViewModel = ViewModelProvider(this)[PrescriptionViewModel::class.java]
         val jsonString = resources!!.openRawResource(R.raw.data).bufferedReader().use { it.readText() }
         val data = Gson().fromJson(jsonString,Data::class.java)
+
+        val ageUnits = arrayOf("Years","Months","Weeks","Days")
+        val ageAdapter = ArrayAdapter(this,android.R.layout.simple_list_item_1,ageUnits)
+        binding.ageUnits.adapter = ageAdapter
 
         Log.d("hello",data.labTestName.toString())
 
@@ -140,6 +145,9 @@ class MainActivity : AppCompatActivity() {
             val printManager = getSystemService(PRINT_SERVICE) as PrintManager
             val file = FileManager.getInstance().createTempFile(this@MainActivity,"pdf",false)
             var html = ""
+            val currentDate = Date()
+            val currentMonth = currentDate.month+1
+            val currentYear = currentDate.year + 1900
             prescriptionViewModel.drugList.observe(this) {drugs ->
                 html = """
                 <!DOCTYPE html>
@@ -150,7 +158,7 @@ class MainActivity : AppCompatActivity() {
                 </head>
                 <style>
                 .header {
-                    font-size: 37px;
+                    font-size: 35px;
                     font-weight: bold;
                     margin: 15px;
                 }
@@ -190,21 +198,21 @@ class MainActivity : AppCompatActivity() {
                     <table class="tab">
                         <tr>
                             <td>
-                                CR No. ਸੀਆਰ ਨੰ. : <b>${binding.crno.text.toString()}</b>
+                                CR No. : <b>${binding.crno.text.toString()}</b>
                             </td>
                             <td>
-                                Date & Time ਸੀਆਰ ਨੰ.: <b>08/09/2022</b>
+                                Date & Time : <b>${"${if(currentDate.date<10) "0" else ""}${currentDate.date}/${if(currentMonth<10) "0" else ""}${currentMonth}/${currentYear.toString().substring(2)}"}</b>
                             </td>
                             <td>
-                                Category ਸ਼ਣੇ ◌ੀ: <b></b>
+                                Category : <b></b>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                Patient Name ਮਰੀਜ਼ ਦਾ ਨਾਮ: <b>${binding.name.text.toString()}</b>
+                                Patient Name : <b>${binding.name.text.toString()}</b>
                             </td>
                             <td>
-                                Age/Gender ਉਮਰ / ਿ◌ਲੰਗ: <b>75 Yr/${when(binding.genderRadioGroup.checkedRadioButtonId){
+                                Age/Gender : <b>${binding.age.text.toString()} ${ageUnits[binding.ageUnits.selectedItemPosition]}/${when(binding.genderRadioGroup.checkedRadioButtonId){
                     R.id.male -> "M"
                     R.id.female -> "F"
                     R.id.transgender -> "T"
@@ -212,7 +220,7 @@ class MainActivity : AppCompatActivity() {
                 }}</b>
                             </td>
                             <td>
-                                Father/Spouse/Mother Name  ਪਤਾ/ਿਪਤ<br>/ਪਤਨੀ/ਮਾਂ ਕਾ ਨਾਮ: <b>${binding.father.text.toString()}</b>
+                                Father/Spouse/Mother Name : <b>${binding.father.text.toString()}</b>
                             </td>
                         </tr>
                         <tr>
@@ -220,7 +228,7 @@ class MainActivity : AppCompatActivity() {
                                 Residence : <b></b>
                             </td>
                             <td>
-                                Mobile No. :<b>1232423432</b>
+                                Mobile No. :<b>${binding.number.text.toString()}</b>
                             </td>
                         </tr>
                         <tr>
