@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity() {
                     val pres = it.find { presc ->
                         !presc.isUploaded
                     }
-                    if (pres!=null) {
+                    if (pres==null) {
                         Toast.makeText(
                             this@MainActivity,
                             "Data successfully uploaded",
