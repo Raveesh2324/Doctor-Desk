@@ -134,7 +134,7 @@ class PrescriptionActivity : AppCompatActivity() {
                     else -> null
                 },
                 patGaurdianName = if(binding.father.text.isNullOrEmpty()) null else binding.father.text.toString(),
-                patAge = if(binding.age.text.isNullOrEmpty()) null else binding.name.text.toString() + " " + ageUnits[binding.ageUnits.selectedItemPosition],
+                patAge = if(binding.age.text.isNullOrEmpty()) null else binding.age.text.toString() + " " + ageUnits[binding.ageUnits.selectedItemPosition],
                 mobileNumber = if(binding.number.text.isNullOrEmpty()) null else binding.number.text.toString()
             )
             prescriptionViewModel.insertPrescription(prescription)
