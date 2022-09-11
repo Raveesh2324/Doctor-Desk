@@ -20,7 +20,7 @@ class PrescriptionViewModel @Inject constructor(private val prescriptionReposito
     var uploaded : MutableLiveData<Boolean> = MutableLiveData(false)
     val drugList : MutableLiveData<MutableList<DrugItem>> = MutableLiveData(mutableListOf())
     val testList : MutableLiveData<MutableList<LabTestName>> = MutableLiveData(mutableListOf())
-
+    val loginFailed : MutableLiveData<Boolean> = MutableLiveData(false)
     fun insertPrescription(prescription: Prescription) {
         viewModelScope.launch(Dispatchers.IO) {
             prescriptionRepository.insertPrescription(prescription)
@@ -62,10 +62,14 @@ class PrescriptionViewModel @Inject constructor(private val prescriptionReposito
         viewModelScope.launch {
             try {
                 val response = login(username,password)
+                if(response?.dataValue == null) {
+                    loginFailed.postValue(true)
+                    return@launch
+                }
                 for(prescription in prescriptions) {
-                    if(response!=null && !prescription.isUploaded) {
+                    if(!prescription.isUploaded) {
                         try {
-                            savePrescription(prescription, response.dataValue!![0][0], response.dataValue[0][2])
+                            savePrescription(prescription, response.dataValue[0][0], response.dataValue[0][2])
                             setUploaded(prescription.id ?: 0)
                         } catch (e : Exception) {
                             e.printStackTrace()

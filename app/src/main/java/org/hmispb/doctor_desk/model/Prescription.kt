@@ -7,7 +7,9 @@ import androidx.room.PrimaryKey
 data class Prescription(
     @PrimaryKey(autoGenerate = true)
     val id : Int? = null,
-    val CR_No: Int,
+    val CR_No: String,
+    val history : String,
+    val chiefComplaint : String,
     val Drugdtl: List<Drugdtl>,
     val InvTestCode: List<Int>,
     val currentVisitDate: String? = null,
@@ -24,7 +26,9 @@ data class Prescription(
     val patGender: String? = null,
     val patQueueNo: String? = null,
     val patVisitType: String? = null,
+    val mobileNumber : String? = null,
     val pat_Name: String? = null,
     val seatId: Int? = null,
-    var isUploaded : Boolean = false
+    var isUploaded : Boolean = false,
+
 )
