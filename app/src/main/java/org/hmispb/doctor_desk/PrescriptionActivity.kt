@@ -155,7 +155,8 @@ class PrescriptionActivity : AppCompatActivity() {
             val file = FileManager.getInstance().createTempFile(this@PrescriptionActivity,"pdf",false)
             var html = ""
             prescriptionViewModel.drugList.observe(this) {drugs ->
-                html = """
+                prescriptionViewModel.testList.observe(this) { tests ->
+                    html = """
                 <!DOCTYPE html>
                 <html>
                 <head>
@@ -219,11 +220,11 @@ class PrescriptionActivity : AppCompatActivity() {
                             </td>
                             <td>
                                 Age/Gender :<br> <b>${binding.age.text.toString()} ${ageUnits[binding.ageUnits.selectedItemPosition]}/${when(binding.genderRadioGroup.checkedRadioButtonId){
-                    R.id.male -> "M"
-                    R.id.female -> "F"
-                    R.id.transgender -> "T"
-                    else -> ""
-                }}</b>
+                        R.id.male -> "M"
+                        R.id.female -> "F"
+                        R.id.transgender -> "T"
+                        else -> ""
+                    }}</b>
                             </td>
                             <td>
                                 Father/Spouse/Mother Name : <br><b>${binding.father.text.toString()}</b>
@@ -263,24 +264,43 @@ class PrescriptionActivity : AppCompatActivity() {
                         </tr>
                         <tr>
                             <td colspan="3">
-                                <b>Rx:</b>
+                                <b>Diagnostic Tests:</b>
+                                <div class="drugs">
             """.trimIndent()
-                for(i in drugs.indices) {
-                    val drug = drugs[i]
-                    val element = """
-                        <div class="drugs">
-                                    <div>${i+1}. <b>${drug.drug.drugName}</b>, ${drug.dosage.hgstrDoseName}, ${drug.frequency.frequencyName}, ${drug.days} Day${if(drug.days>1) "s" else ""},</div>
+
+                    for(i in tests.indices) {
+                        val test = tests[i]
+                        html += """
+                        <div>${i+1}. <b>${test.testName}</b></div>
                     """.trimIndent()
-                    html += element
-                }
-                html += """
-                </div>
+                    }
+                    html += """
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <b>Rx:</b>
+                                <div class="drugs">
+                """.trimIndent()
+
+                    for(i in drugs.indices) {
+                        val drug = drugs[i]
+                        html += """
+                        <div>${i+1}. <b>${drug.drug.drugName}</b>, ${drug.dosage.hgstrDoseName}, ${drug.frequency.frequencyName}, ${drug.days} Day${if(drug.days>1) "s" else ""},</div>
+                    """.trimIndent()
+                    }
+
+                    html += """
+                                </div>
                             </td>
                         </tr>
                     </table>
                 </body>
                 </html>
             """.trimIndent()
+
+                }
             }
             PDFUtil.generatePDFFromHTML(this@PrescriptionActivity,file,html, object : PDFPrint.OnPDFPrintListener {
                 override fun onSuccess(file: File?) {
@@ -344,7 +364,7 @@ class PrescriptionActivity : AppCompatActivity() {
                             }
                             callback?.onWriteFinished(arrayOf(PageRange.ALL_PAGES))
                         }
-                        // TODO: how to do aaaaaaaaaaa
+
                         private fun drawPage(page: PdfDocument.Page?) {
                             val canvas: Canvas? = page?.canvas
 
@@ -374,81 +394,7 @@ class PrescriptionActivity : AppCompatActivity() {
                 }
 
             })
-//            printManager.print("Doctor Desk Document",object : PrintDocumentAdapter(){
-//                private var pdfDocument: PrintedPdfDocument? = null
-//                override fun onLayout(
-//                    oldAttributes: PrintAttributes?,
-//                    newAttributes: PrintAttributes,
-//                    cancellationSignal: CancellationSignal?,
-//                    callback: LayoutResultCallback,
-//                    extras: Bundle?
-//                ) {
-//                    pdfDocument = PrintedPdfDocument(this@MainActivity,newAttributes)
-//                    if(cancellationSignal?.isCanceled==true) {
-//                        callback.onLayoutCancelled()
-//                        return
-//                    }
-//                    val info = PrintDocumentInfo.Builder("doctor_desk_prescription.pdf")
-//                        .setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
-//                        .setPageCount(1)
-//                        .build()
-//                    callback.onLayoutFinished(info,oldAttributes!=newAttributes)
-//                }
-//
-//                override fun onWrite(
-//                    p0: Array<out PageRange>?,
-//                    destination: ParcelFileDescriptor?,
-//                    cancellationSignal: CancellationSignal?,
-//                    callback: WriteResultCallback?
-//                ) {
-//                    val page = pdfDocument?.startPage(0)
-//                    if(cancellationSignal?.isCanceled==true) {
-//                        callback?.onWriteCancelled()
-//                        pdfDocument?.close()
-//                        pdfDocument = null
-//                        return
-//                    }
-//                    drawPage(page)
-//                    pdfDocument?.finishPage(page)
-//
-//                    try {
-//                        pdfDocument?.writeTo(
-//                            FileOutputStream(
-//                                destination?.fileDescriptor
-//                            )
-//                        )
-//                    } catch (e: IOException) {
-//                        callback?.onWriteFailed(e.toString())
-//                        return
-//                    } finally {
-//                        pdfDocument?.close()
-//                        pdfDocument = null
-//                    }
-//                    callback?.onWriteFinished(arrayOf(PageRange.ALL_PAGES))
-//                }
-//                // TODO: how to do aaaaaaaaaaa
-//                private fun drawPage(page: PdfDocument.Page?) {
-//                    val canvas: Canvas? = page?.canvas
-//
-//                    // units are in points (1/72 of an inch)
-//                    val titleBaseLine = 72f
-//                    val leftMargin = 54f
-//                    val view = layoutInflater.inflate(R.layout.login_dialog,null,false)
-//                    view.draw(canvas)
-////                    val paint = Paint()
-////                    paint.color = Color.BLACK
-////                    paint.textSize = 36f
-////                    val format = BitmapFactory.decodeResource(resources!!,R.drawable.img23)
-////                    canvas?.drawBitmap(format,0f,0f,null)
-////                    Log.d("sadge","${canvas?.height} ${canvas?.width}")
-////                    canvas?.drawText("Test Title", leftMargin, titleBaseLine, paint)
-////                    paint.textSize = 11f
-////                    canvas?.drawText("Test paragraph", leftMargin, titleBaseLine + 25, paint)
-////                    paint.color = Color.BLUE
-////                    canvas?.drawRect(100f, 100f, 172f, 172f, paint)
-//                }
-//
-//            },null)
+
         }
     }
 }
