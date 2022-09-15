@@ -55,7 +55,7 @@ class PrintPrescriptionActivity : AppCompatActivity() {
             }
             val crno = hospitalCode + crMiddle + binding.crno.text.toString()
             prescriptionViewModel.prescriptionList.observe(this) { prescriptionList ->
-                val prescription = prescriptionList.find { prescription ->
+                val prescription = prescriptionList.findLast { prescription ->
                     prescription.CR_No == crno
                 }
                 if(prescription==null) {

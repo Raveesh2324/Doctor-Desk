@@ -4,5 +4,5 @@ data class SavePrescriptionRequest(
     val hospitalCode : String,
     val seatId : String,
     val inputDataJson : String,
-    val modeForData : String = "PATIENT_PRESCRIPTION"
+    val modeFordata : String = "PATIENT_PRESCRIPTION"
 )

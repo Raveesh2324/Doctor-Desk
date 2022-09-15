@@ -42,7 +42,7 @@ class DrugAdapter(
         holder.delete.setOnClickListener {
             val drugs = prescriptionViewModel.drugList.value!!
             drugs.removeAt(position)
-            notifyDataSetChanged()
+            prescriptionViewModel.drugList.postValue(drugs)
         }
     }
 

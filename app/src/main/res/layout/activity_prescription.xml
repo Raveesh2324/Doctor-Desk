@@ -401,34 +401,38 @@
                 android:layout_marginTop="50dp"
                 android:layout_marginBottom="20dp"
                 android:orientation="horizontal">
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
                 <Button
                     android:id="@+id/submit"
-                    android:layout_width="170dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="10dp"
                     android:text="Submit"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:textSize="@dimen/_11ssp"
                     android:textAllCaps="true" />
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
                 <Button
-                    android:id="@+id/print"
-                    android:layout_width="170dp"
+                    android:id="@+id/clear"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="10dp"
-                    android:text="Print"
+                    android:text="Clear"
+                    android:layout_marginHorizontal="@dimen/_5sdp"
+                    android:textSize="@dimen/_11ssp"
                     android:textAllCaps="true" />
-                <Space
+                <Button
+                    android:id="@+id/print"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:padding="10dp"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:text="Print"
+                    android:textSize="@dimen/_11ssp"
+                    android:textAllCaps="true" />
             </LinearLayout>
 
 

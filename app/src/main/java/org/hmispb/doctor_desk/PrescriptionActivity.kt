@@ -92,13 +92,15 @@ class PrescriptionActivity : AppCompatActivity() {
         }
 
         binding.submit.setOnClickListener {
-            if(binding.crno.text.isNullOrEmpty() || binding.history.text.isNullOrEmpty() || binding.chiefComplaint.text.isNullOrEmpty() || binding.crno.text.toString().length<3) {
+            if(binding.crno.text.isNullOrEmpty() || binding.history.text.isNullOrEmpty() || binding.chiefComplaint.text.isNullOrEmpty() || binding.crno.text.toString().length<3 || (!binding.number.text.isNullOrEmpty() && binding.number.text.toString().length<10)) {
                 if(binding.crno.text.isNullOrEmpty() || binding.crno.text.toString().length<3)
                     binding.crno.error = "Required"
                 if(binding.history.text.isNullOrEmpty())
                     binding.history.error = "Required"
                 if(binding.chiefComplaint.text.isNullOrEmpty())
                     binding.chiefComplaint.error = "Required"
+                if(!binding.number.text.isNullOrEmpty() && binding.number.text.toString().length<10)
+                    binding.number.error = "Invalid"
                 Toast.makeText(this@PrescriptionActivity,"One or more fields are empty",Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -147,6 +149,19 @@ class PrescriptionActivity : AppCompatActivity() {
 
         prescriptionViewModel.prescriptionList.observe(this) {
             Log.d("listy",it.toString())
+        }
+
+        binding.clear.setOnClickListener {
+            binding.crno.setText("")
+            binding.name.setText("")
+            binding.genderRadioGroup.clearCheck()
+            binding.father.setText("")
+            binding.age.setText("")
+            binding.number.setText("")
+            binding.chiefComplaint.setText("")
+            binding.history.setText("")
+            prescriptionViewModel.drugList.postValue(mutableListOf())
+            prescriptionViewModel.testList.postValue(mutableListOf())
         }
 
         binding.print.setOnClickListener {
