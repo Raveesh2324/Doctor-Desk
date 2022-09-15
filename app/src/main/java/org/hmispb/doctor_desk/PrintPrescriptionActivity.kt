@@ -167,8 +167,30 @@ class PrintPrescriptionActivity : AppCompatActivity() {
                         </tr>
                         <tr>
                             <td colspan="3">
-                                <b>Rx:</b>
+                                <b>Diagnostic Tests:</b>
+                                <div class="drugs">
             """.trimIndent()
+
+                for(i in prescription.InvTestCode.indices) {
+                    val testCode = prescription.InvTestCode[i]
+                    val test = data.labTestName.find {
+                        it?.testCode == testCode
+                    }
+                    html += """
+                        <div>${i+1}. <b>${test?.testName}</b></div>
+                    """.trimIndent()
+                }
+
+                html += """
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <b>Rx:</b>
+                                <div class="drugs">
+                """.trimIndent()
+
                 for(i in prescription.Drugdtl.indices) {
                     val drugDtl = prescription.Drugdtl[i]
                     val drug = data.drugList.find {
@@ -180,12 +202,11 @@ class PrintPrescriptionActivity : AppCompatActivity() {
                     val frequency = data.drugFrequency.find {
                         it.frequencyId == drugDtl.frequencyId
                     }
-                    val element = """
-                        <div class="drugs">
-                                    <div>${i+1}. <b>${drug?.drugName}</b>, ${dosage?.hgstrDoseName}, ${frequency?.frequencyName}, ${drugDtl.noOfdays} Day${if(drugDtl.noOfdays.toInt()>1) "s" else ""},</div>
+                    html += """
+                        <div>${i+1}. <b>${drug?.drugName}</b>, ${dosage?.hgstrDoseName}, ${frequency?.frequencyName}, ${drugDtl.noOfdays} Day${if(drugDtl.noOfdays.toInt()>1) "s" else ""},</div>
                     """.trimIndent()
-                    html += element
                 }
+
                 html += """
                 </div>
                             </td>
