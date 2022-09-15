@@ -92,14 +92,13 @@ class PrescriptionActivity : AppCompatActivity() {
         }
 
         binding.submit.setOnClickListener {
-            if(binding.crno.text.isNullOrEmpty() || binding.history.text.isNullOrEmpty() || binding.chiefComplaint.text.isNullOrEmpty() || binding.crno.text.toString().length<3 || binding.number.text.toString().length<10) {
+            if(binding.crno.text.isNullOrEmpty() || binding.history.text.isNullOrEmpty() || binding.chiefComplaint.text.isNullOrEmpty() || binding.crno.text.toString().length<3) {
                 if(binding.crno.text.isNullOrEmpty() || binding.crno.text.toString().length<3)
                     binding.crno.error = "Required"
                 if(binding.history.text.isNullOrEmpty())
                     binding.history.error = "Required"
                 if(binding.chiefComplaint.text.isNullOrEmpty())
                     binding.chiefComplaint.error = "Required"
-                if(binding.number.text.toString().length<10) binding.number.error = "Invalid Mobile Number"
                 Toast.makeText(this@PrescriptionActivity,"One or more fields are empty",Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
