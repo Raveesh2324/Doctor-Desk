@@ -5,11 +5,15 @@
       <map>
         <entry key="..\:/Programming/MyGithubRepos/Doctor-Desk/app/src/main/res/layout/activity_login.xml" value="0.23731884057971014" />
         <entry key="..\:/Programming/MyGithubRepos/Doctor-Desk/app/src/main/res/layout/activity_main.xml" value="0.25" />
-        <entry key="..\:/Programming/MyGithubRepos/Doctor-Desk/app/src/main/res/layout/activity_prescription.xml" value="0.19021739130434784" />
+        <entry key="..\:/Programming/MyGithubRepos/Doctor-Desk/app/src/main/res/layout/activity_prescription.xml" value="0.264" />
+        <entry key="..\:/Programming/MyGithubRepos/Doctor-Desk/app/src/main/res/layout/bottomsheet_add_drug.xml" value="0.13722826086956522" />
         <entry key="..\:/Programming/MyGithubRepos/Doctor-Desk/app/src/main/res/layout/bottomsheet_add_test.xml" value="0.25" />
-        <entry key="..\:/Users/Manjot/AndroidStudioProjects/DoctorDesk/app/src/main/res/layout/activity_login.xml" value="0.125" />
+        <entry key="..\:/Programming/MyGithubRepos/Doctor-Desk/app/src/main/res/layout/dialog_searchable_spinner.xml" value="0.16259057971014493" />
+        <entry key="..\:/Programming/MyGithubRepos/Doctor-Desk/app/src/main/res/layout/dialog_searchable_spinner_drug.xml" value="0.17300724637681159" />
+        <entry key="..\:/Programming/MyGithubRepos/Doctor-Desk/app/src/main/res/layout/drug_list_item.xml" value="0.25" />
+        <entry key="..\:/Programming/MyGithubRepos/Doctor-Desk/app/src/main/res/layout/login_dialog.xml" value="0.25" />
+        <entry key="..\:/Programming/MyGithubRepos/Doctor-Desk/app/src/main/res/layout/test_list_item.xml" value="0.25" />
         <entry key="..\:/Users/Manjot/AndroidStudioProjects/DoctorDesk/app/src/main/res/layout/activity_main.xml" value="0.12" />
-        <entry key="..\:/Users/Manjot/AndroidStudioProjects/DoctorDesk/app/src/main/res/layout/activity_prescription.xml" value="0.1" />
         <entry key="..\:/Users/Manjot/AndroidStudioProjects/DoctorDesk/app/src/main/res/layout/nab.xml" value="0.1" />
       </map>
     </option>
