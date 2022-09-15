@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ListView
+import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.hmispb.doctor_desk.databinding.BottomsheetAddTestBinding
 import org.hmispb.doctor_desk.model.Data
@@ -33,7 +34,7 @@ class AddTestBottomSheet(val data : Data, val prescriptionViewModel: Prescriptio
         binding.spinnerTest.setOnClickListener {
             val dialog = Dialog(requireContext())
             dialog.setContentView(R.layout.dialog_searchable_spinner)
-            dialog.window?.setLayout(650,800)
+            dialog.window?.setLayout(750,1280)
             dialog.show()
             //Initiate and assign variable
             val editText = dialog.findViewById<EditText>(R.id.edit_text)
@@ -58,13 +59,20 @@ class AddTestBottomSheet(val data : Data, val prescriptionViewModel: Prescriptio
         }
 
         binding.addTest.setOnClickListener {
-            val tests = prescriptionViewModel.testList.value ?: mutableListOf()
-            tests.add(data.labTestName.find {
-                it?.testName == binding.spinnerTest.text
-            } ?: LabTestName.nullLabTestName )
+            if (binding.spinnerTest.text=="") Toast.makeText(
+                requireContext(),
+                "Please select test",
+                Toast.LENGTH_SHORT
+            ).show()
+            else {
+                val tests = prescriptionViewModel.testList.value ?: mutableListOf()
+                tests.add(data.labTestName.find {
+                    it?.testName == binding.spinnerTest.text
+                } ?: LabTestName.nullLabTestName)
 
-            prescriptionViewModel.testList.postValue(tests)
-            dismiss()
+                prescriptionViewModel.testList.postValue(tests)
+                dismiss()
+            }
         }
         return binding.root
     }
