@@ -34,7 +34,7 @@ class AddTestBottomSheet(val data : Data, val prescriptionViewModel: Prescriptio
         binding.spinnerTest.setOnClickListener {
             val dialog = Dialog(requireContext())
             dialog.setContentView(R.layout.dialog_searchable_spinner)
-            dialog.window?.setLayout(750,1280)
+          //  dialog.window?.setLayout(940,1300)
             dialog.show()
             //Initiate and assign variable
             val editText = dialog.findViewById<EditText>(R.id.edit_text)
