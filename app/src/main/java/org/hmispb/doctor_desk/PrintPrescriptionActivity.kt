@@ -8,6 +8,7 @@ import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
 import android.print.*
 import android.print.pdf.PrintedPdfDocument
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
@@ -31,6 +32,8 @@ class PrintPrescriptionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPrintPrescriptionBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        try { supportActionBar?.setDisplayHomeAsUpEnabled(true) } catch (e : Exception){}
 
         val sharedPreferences = getSharedPreferences(Utils.LOGIN_RESPONSE_PREF, MODE_PRIVATE)
 
@@ -273,5 +276,12 @@ class PrintPrescriptionActivity : AppCompatActivity() {
                 })
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId== android.R.id.home){
+            finish()
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

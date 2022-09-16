@@ -48,6 +48,8 @@ class PrescriptionActivity : AppCompatActivity() {
         binding = ActivityPrescriptionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        try { supportActionBar?.setDisplayHomeAsUpEnabled(true) } catch (e : Exception){}
+
         val sharedPreferences = getSharedPreferences(Utils.LOGIN_RESPONSE_PREF, MODE_PRIVATE)
 
         prescriptionViewModel = ViewModelProvider(this)[PrescriptionViewModel::class.java]
@@ -410,5 +412,11 @@ class PrescriptionActivity : AppCompatActivity() {
             })
 
         }
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId== android.R.id.home){
+            finish()
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
