@@ -46,6 +46,8 @@ class PrescriptionActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPrescriptionBinding.inflate(layoutInflater)
+        val appName = applicationInfo.loadLabel(packageManager).toString()
+        title = "$appName v${BuildConfig.VERSION_NAME}"
         setContentView(binding.root)
 
         try { supportActionBar?.setDisplayHomeAsUpEnabled(true) } catch (e : Exception){}

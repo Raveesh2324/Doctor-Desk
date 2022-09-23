@@ -24,6 +24,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        val appName = applicationInfo.loadLabel(packageManager).toString()
+        title = "$appName v${BuildConfig.VERSION_NAME}"
         setContentView(binding.root)
 
         prescriptionViewModel = ViewModelProvider(this)[PrescriptionViewModel::class.java]
